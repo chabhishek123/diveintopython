@@ -1,4 +1,6 @@
 import urllib
+
+
 def get_page(url):
     if not url.startswith("http://www.diveintopython.net/"):
         return ""
@@ -7,14 +9,16 @@ def get_page(url):
     except:
         return ""
 
+
 def get_next_target(page):
     start_link = page.find('<a href=')
-    if start_link == -1: 
+    if start_link == -1:
         return None, 0
     start_quote = page.find('"', start_link)
     end_quote = page.find('"', start_quote + 1)
     url = page[start_quote + 1:end_quote]
     return url, end_quote
+
 
 def get_all_links(page):
     links = []
@@ -33,29 +37,33 @@ def union(a, b):
         if e not in a:
             a.append(e)
 
+
 def add_page_to_index(index, url, content):
     words = content.split()
     for word in words:
         add_to_index(index, word, url)
-        
+
+
 def add_to_index(index, keyword, url):
     if keyword in index:
         index[keyword].append(url)
     else:
         index[keyword] = [url]
-    
+
+
 def lookup(index, keyword):
     if keyword in index:
         return index[keyword]
     else:
         return None
 
-def crawl_web(seeds): # returns index, graph of inlinks
+
+def crawl_web(seeds):  # returns index, graph of inlinks
     tocrawl = seeds
     crawled = []
     graph = {}  # <url>, [list of pages it links to]
-    index = {} 
-    while tocrawl and stop != 0: 
+    index = {}
+    while tocrawl and stop != 0:
         page = tocrawl.pop()
         if page not in crawled:
             stop -= 1
@@ -66,6 +74,9 @@ def crawl_web(seeds): # returns index, graph of inlinks
             union(tocrawl, outlinks)
             crawled.append(page)
     return index, graph
+
+
 def refresh():
-    global index,graph
-    index,graph = crawl_web(["http://www.diveintopython.net/toc/index.html","http://www.diveintopython.net/index.html"])
+    global index, graph
+    index, graph = crawl_web(
+        ["http://www.diveintopython.net/toc/index.html", "http://www.diveintopython.net/index.html"])
